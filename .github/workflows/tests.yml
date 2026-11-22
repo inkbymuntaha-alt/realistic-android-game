@@ -1,0 +1,16 @@
+name: tests
+on: [push, pull_request]
+env:
+  GODOT_VERSION: 4.4.1
+jobs:
+  unit-and-gameplay:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Godot
+        run: |
+          curl -sSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip && mv Godot_v${GODOT_VERSION}-stable_linux.x86_64 godot && chmod +x godot
+      - run: ./godot --headless --import || true
+      - name: Run tests
+        run: ./godot --headless --script tests/run_tests.gd
