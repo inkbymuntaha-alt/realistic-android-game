@@ -1,0 +1,23 @@
+name: validate
+on: [push, pull_request]
+env:
+  GODOT_VERSION: 4.4.1
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: No-package guard (APK/AAB/export presets are forbidden until approval)
+        run: |
+          if git ls-files | grep -Ei '\.(apk|aab|keystore)$|export_presets\.cfg'; then
+            echo "Packaging artifacts are not allowed yet."; exit 1
+          fi
+      - name: Install Godot
+        run: |
+          curl -sSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip && mv Godot_v${GODOT_VERSION}-stable_linux.x86_64 godot && chmod +x godot
+      - name: Import project and compile all scripts
+        run: |
+          ./godot --headless --import || true
+          ./godot --headless --import 2>&1 | tee import.log
+          ! grep -E "SCRIPT ERROR|Parse Error|Compile Error" import.log
