@@ -12,3 +12,4 @@ Stack stones, ceramics and wood on a riverbank. Offline, no account, no ads, no 
 
 ## Status
 Source only. No APK/AAB is produced and packaging is disabled until explicit approval. See ROADMAP.md and TESTING.md.
+ test
